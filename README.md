@@ -4,7 +4,7 @@
 ### cookie的使用(模拟登录)
 ### 登录状态校验装饰器
 ![](https://github.com/hetanglinlin/-flask/blob/master/images/Xmind/day01.png)
-
+![](media/AOP.png)
 
 
 
