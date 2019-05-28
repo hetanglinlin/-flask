@@ -1,38 +1,29 @@
-
-from flask import Flask, request, render_template, session, redirect
+import redis
+from flask import Flask
 from flask_script import Manager
+from flask_session import Session
 
+from user.views import blue
 
 app = Flask(__name__)
 
-app.secret_key = 'w1314ewgdfdsaewqr43ytfdd'
+# 设置secret_key
+app.secret_key = 'o[ayfosjnfhw487-q9ruq[aek'
 
-@app.route('/index/')
-def index():
-    return 'index'
+# 设置flask-session的内容，将session数据保存在redis中
+app.config['SESSION_TYPE'] = 'redis'
+# redis.Redis(host='127.0.0.1', port=6379, password='密码')
+app.config['SESSION_REDIS'] = redis.Redis(host='127.0.0.1', port=6379)
+# 初始化Session的两种方式:
+# 第一种方式
+Session(app)
+# 第二种方式
+# sess = Session()
+# sess.init_app(app)
 
+# 第三步: 注册蓝图
+app.register_blueprint(blueprint=blue, url_prefix='/user')
 
-# session的使用：两种方式
-#     一、将数据保存在浏览器（客户端）
-#     二、将数据保存在服务器（数据库）
-
-@app.route('/login/', methods=['GET', 'POST'])
-def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-
-    if request.method == 'POST':
-        # 模拟登陆（session使用）
-        username = request.form.get('username')
-        passwprd = request.form.get('password')
-        if username == 'coco' and passwprd == '123456':
-            # 在django中，session[key] = value实际上做了两步操作
-            # 第一步：才cookie中设置了键值对，
-            session['username'] = 'coco'
-            return redirect('/index/')
-        return render_template('login.html')
-
-
-if __name__ == '__name__':
+if __name__ == '__main__':
     manage = Manager(app)
     manage.run()

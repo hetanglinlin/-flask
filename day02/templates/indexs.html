@@ -1,0 +1,18 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+    Title
+{% endblock %}
+
+{% block content %}
+    {# {% if %} 注解：在django中方向解析 {% url ‘namespace:name’ 1 2 3 4 %} #}
+    <!--flask: 反向解析url_for-->
+    <a href="/user/stu/1/">stu</a>
+    <a href="/user/stu2/">stu2</a>
+    <a href="/user/stu3/1/2/3/">stu3</a>
+
+    <a href="{{ url_for('first.stu', id=1) }}">stu</a>
+    <a href="{{ url_for('first.stu2') }}">stu2</a>
+    <a href="{{ url_for('first.stu3', id1=1, id2=2, id3=3) }}">stu3</a>
+{% endblock %}
