@@ -1,0 +1,59 @@
+
+{% extends 'base_main.html' %}
+
+{% block title %}
+    index页面
+{% endblock %}
+
+{% block css %}
+    <!-- 第一种加载样式css、js、images、font -->
+    <!--<link href="/static/css/style.css" rel="stylesheet">-->
+    <!-- 第二种加载方式 url_for -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    {# 在django中 {{ block.super }} #}
+    <script src="{{ url_for('static', filename='js/xxx.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <p>index页面</p>
+    {# 变量的解析使用 {{ 变量名 }} #}
+    {{ item1 }}
+    {% for item in item1 %}
+        {% if item == 'django' %}
+            <span style="color:yellow;">{{ item }}</span>
+        {% else %}
+            {{ item }}
+        {% endif %}
+
+        {# 在django中有ifequal，在flask中没有ifequal #}
+        {#
+            {% ifequal item 'vue' %}
+                <span style="color:red;"> {{ item }} </span>
+            {% endifequal %}
+        #}
+    {% endfor %}
+
+    {# django中获取迭代对象中的元素，使用方法： 对象.下标 ，如item1.0 #}
+    {# flask中获取迭代对象中的元素, 使用方法: 对象[下标] #}
+    {{ item1[0] }}
+
+    {# 宏定义 macro #}
+    {# 定义接收无参的宏定义函数 #}
+    {% from 'functions.html' import say, hello %}
+    {{ say() }}
+
+    {# 接收参数的宏定义函数 #}
+    {{ hello('小明') }}
+    {{ hello('张三') }}
+    {{ hello('李四') }}
+
+    {{ content_h2 | safe }}
+    {{ content_h2 | striptags }}
+
+{% endblock %}
+

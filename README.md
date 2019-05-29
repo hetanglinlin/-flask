@@ -102,4 +102,88 @@
         return redirect(url_for('first.index'))
 ![](https://github.com/hetanglinlin/-flask/blob/master/images/Xmind/day02.png)
 
+### 模板继承与拆分，静态资源加载url_for
+### super语法、for循环、通过下标获取数据
+### if语法、ifequal语法、宏定义macro语法
+### 过滤器
+### flask-sqlalchemy的使用，模型的定义，数据库连接地址的配置
+### 初始化数据库中的表
+### 添加数据add和add_all
+### 删除数据delete和修改数据
+    class Student(db.Model):
+        # 自增的主键id字段
+        id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        # 唯一且不能为空且长度不超过10字符的name字段
+        s_name = db.Column(db.String(10), unique=True, nullable=False)
+        # 默认为18的age字段
+        s_age = db.Column(db.Integer, default=18)
+    
+        # django: auto_now_add auto_now
+        # 只在save()方法调用时auto_now字段才做更新。
+        # update()方法调用时auto_now字段不更新
+        create_time = db.Column(db.DateTime, default=datetime.now)
+    
+        # 定义tablename表示模型迁移到数据库中对应的表名称
+        # 如果没定义tablename参数，表名为模型名称小写
+        __tablename__ = 'stu'
+    
+        def save(self):
+            db.session.add(self)
+            db.session.commit()
+            
+---
+
+    @blue.route('/init_db/', methods=['GET'])
+    def init_db():
+        # 将模型映射成表，只用使用一次
+        db.create_all()
+        # db.drop_all()
+        return '初始化数据库成功'
+    
+    
+    @blue.route('/stu/', methods=['POST', 'DELETE', 'PATCH'])
+    def stu():
+        if request.method == 'POST':
+            # 创建学生表数据
+            stu = Student()
+            stu.s_name = '小明'
+            # 事务session的add方法，其实是在准备插入语句insert
+            # db.session.add(stu)
+            # 事务session提交了，数据才会插入到数据库中
+            # db.session.commit()
+            # 优化保存方法，stu.save()
+            stu.save()
+            return '插入单条数据成功'
+    
+        if request.method == 'DELETE':
+            stu = Student.query.filter(Student.s_name == '王五3').first()
+            stu = Student.query.filter_by(s_name='李四2').first()
+            # delete(接收删除对象)
+            db.session.delete(stu)
+            db.session.commit()
+            return '删除数据成功'
+    
+        if request.method == 'PATCH':
+            stu = Student.query.filter(Student.s_name == '小明').first()
+            stu.s_age = 22
+            # 修改和创建可以调用db.session.add() 和commit()操作
+            # stu.save()
+            db.session.commit()
+            return '修改数据成功'
+    
+    
+    @blue.route('/stus/', methods=['GET'])
+    def stus():
+        names = ['张三1', '李四2', '王五3']
+        stus_list = []
+        for name in names:
+            stu = Student()
+            stu.s_name = name
+            # stu.save()
+            stus_list.append(stu)
+        # add_all([添加对象1, 添加对象2....])
+        db.session.add_all(stus_list)
+        db.session.commit()
+        return '批量插入数据成功'
+![]()
 
