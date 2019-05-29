@@ -185,5 +185,5 @@
         db.session.add_all(stus_list)
         db.session.commit()
         return '批量插入数据成功'
-![]()
+![](https://github.com/hetanglinlin/-flask/blob/master/images/Xmind/day03.png)
 
