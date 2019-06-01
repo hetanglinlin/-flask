@@ -437,3 +437,42 @@
         # 定义tablename表示模型迁移到数据库中对应的表名称
         # 如果没定义tablename参数，表名为模型名称小写
         __tablename__ = 'stu'
+![](https://github.com/hetanglinlin/-flask/blob/master/images/Xmind/day04.png)
+
+### 注册表单form定义、错误信息解析、csrf_token定义
+### 表单字段的长度校验、密码EqualTo校验、validate_字段、加密解密等等
+### 上传图片
+### 修改模板和静态文件内容
+    @blue.route('/register/', methods=['GET', 'POST'])
+    def register():
+        form = UserRegisterForm()
+    
+        if request.method == 'GET':
+            return render_template('register.html', form=form)
+    
+        if request.method == 'POST':
+            # 校验传递的username，pw1，pw2是必填值，且长度要限制，账号是否存在判断
+            # 1. 定义form表单
+            if form.validate_on_submit():
+                # 账号密码全部校验成功
+                username = form.username.data
+                password = form.pw1.data
+                icon = form.icon.data
+                # 保存账号信息
+                user = User()
+                user.username = username
+                user.password = generate_password_hash(password)
+                if icon:
+                    # 保存图片，且保存图片字段
+                    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                    STATIC_DIR = os.path.join(BASE_DIR, 'static')
+                    MEDIA_DIR = os.path.join(STATIC_DIR, 'media')
+                    # 保存图片的绝对路径
+                    icon_path = os.path.join(MEDIA_DIR, icon.filename)
+                    icon.save(icon_path)
+                    # 保存图片的相对路径
+                    user.icons = icon.filename
+    
+                db.session.add(user)
+                db.session.commit()
+            return render_template('register.html', form=form)

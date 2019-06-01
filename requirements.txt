@@ -10,3 +10,4 @@ Werkzeug==0.15.4
 flask-blueprint==1.2.7
 flask-sqlalchemy
 pymysql
+flask-wtf
